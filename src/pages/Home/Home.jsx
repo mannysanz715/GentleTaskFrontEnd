@@ -16,8 +16,14 @@ function Home (){
   }
 
 
-  function submitForm(){
+  async function submitForm(e){
+    e.preventDefault()
+    try {
+      await taskServices.createTask(taskData)
 
+    } catch (error) {
+      console.log(error)
+    }
   }
   const {taskTitle, taskDescription, taskDeadline, taskStatus} = taskData
 
