@@ -1,15 +1,38 @@
 import { useState, useEffect } from "react";
-
+import ListOfTodo from "../../components/List_of_Todo/ListOfTodo.jsx";
 
 
 import * as categoryServices from '../../services/CategoriesServices.js'
 import * as taskServices from '../../services/TaskServices.js'
 
 function Home (){
-  //Getting all tasks
-
   //Create state for getting task data
   const [taskData, setTaskData] = useState({taskTitle : "", taskDescription : "", taskStatus : "", taskDeadline : "", categoryId : "" })
+  let [list, setList] = useState([])
+  
+
+  async function fetchData() {
+    try{
+      const response = await taskServices.getTaskList()
+      setList(response)
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
+  async function handleDelete(id){
+    await taskServices.deleteTask(id)
+    await fetchData()
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+
+
+
 
   function updateForm(e){
     setTaskData({...taskData, [e.target.name] : e.target.value})
@@ -20,7 +43,8 @@ function Home (){
     e.preventDefault()
     try {
       await taskServices.createTask(taskData)
-
+      await fetchData()
+      setTaskData({taskTitle : "", taskDescription : "", taskStatus : "", taskDeadline : "", categoryId : "" })
     } catch (error) {
       console.log(error)
     }
@@ -31,7 +55,7 @@ function Home (){
     <>
       <h1>Welcome to the home page</h1>
       <h2>Lets Create Our First Task</h2>
-
+      <ListOfTodo todoList={list} handleDelete={handleDelete}/>
       <form>
         <input type="text" onChange={updateForm} name="taskTitle" id="taskTitle" value={taskTitle} placeholder="To-do Task"/>
         <input type="text" value={taskDescription} onChange={updateForm} name="taskDescription" id="taskDescription" placeholder="Description"/>

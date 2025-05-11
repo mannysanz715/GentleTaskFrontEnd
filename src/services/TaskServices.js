@@ -14,8 +14,6 @@ async function getTaskList(){
 }
 
 async function createTask(formData){
-  console.log(formData)
-  console.log(JSON.stringify(formData))
   const data = JSON.stringify(formData)
 try {
   const response = await fetch(`http://localhost:8080/tasks`,{
@@ -32,7 +30,16 @@ try {
 }
 }
 
+async function deleteTask(id){
+  try {
+    await fetch(`http://localhost:8080/tasks/${id}`,{
+      method: "DELETE"    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 
 export{
-  getTaskList, createTask
+  getTaskList, createTask, deleteTask
 }
